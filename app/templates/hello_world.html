@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello, world!</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col" >{{describe}}</div>
+            <div class="col"> {{correlation_matrix}}</div>
+        </div>
+    </div>
+
+    
+    <form action="hello_world" method="post">
+        {% csrf_token %}
+        <input type="text" name="area" placeholder="Area" required>
+     <!--   <input type="text" name="lat" placeholder="Latitude" required>-->
+<!--        <input type="text" name="lon" placeholder="Longitude" required>-->
+        <input type="text" name="room" placeholder="Number of rooms" required>
+        <button type="submit">Predict Price</button>
+      </form>
+      
+
+    {{ print }}
+    {{m | safe}}
+</body>
+</html>
