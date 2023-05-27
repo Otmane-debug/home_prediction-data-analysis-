@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 import seaborn as sns
@@ -9,6 +9,43 @@ from geopy.geocoders import Nominatim
 import plotly.express as px
 import plotly.io as pio
 import openai
+from .forms import CreateUserFrom
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
+def register(request):
+    form = CreateUserFrom()
+
+    if request.method =="POST":
+        form = CreateUserFrom(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+
+    context = {'form': form}
+    return render(request, "register.html", context)
+
+def login_view(request):
+
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            messages.info(request, 'Username Or Password is incorrect')
+
+    context = {}
+    return render(request, 'login.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
 
 def index(request):
     return render(request, "index.html")
@@ -16,6 +53,7 @@ def index(request):
 def contact(request):
     return render(request, "contact.html")
 
+@login_required(login_url='login')
 def analyse(request):
 
     queryset = House.objects.all()
@@ -50,6 +88,7 @@ def analyse(request):
     
     return render(request, 'analyse.html', context)
 
+@login_required(login_url='login')
 def prices(request):
     queryset = House.objects.all()
 
